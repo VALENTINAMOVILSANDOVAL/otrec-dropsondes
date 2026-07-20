@@ -1,4 +1,4 @@
-# otrec-wband-radar
+# otrec-dropsondes
 
 This repository contains a modular Python package designed to generate publication-quality, 3-panel plots of airborne W-band radar data collected during the **OTREC (Organization of Tropical East Pacific Convection)** field campaign. 
 
