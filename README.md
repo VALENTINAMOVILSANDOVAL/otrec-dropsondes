@@ -1,12 +1,14 @@
 # otrec-dropsondes
 
-This repository contains a modular Python package designed to generate publication-quality, 3D-Var dropsonde data collected during the **OTREC (Organization of Tropical East Pacific Convection)** field campaign. 
+This repository contains a modular Python package designed to generate publication-quality diagnostic plots of dropsonde analysis data collected during the OTREC (Organization of Tropical East Pacific Convection) field campaign.
+The tool pairs 3DVAR-gridded dropsonde data with thermodynamic and kinematic fields, applies case-specific spatial and vertical bounds, and exports high-resolution PDFs optimized for scientific journals.
 
 ## 📊 Data Source & Processing
 
-The radar data used in this project originates from the OTREC field campaign. 
-* **Raw Data Access:** Datasets can be downloaded from the [UCAR Earth Observing Laboratory (EOL) OTREC portal](https://www.eol.ucar.edu/field_projects/otrec).
-* **Data Conversion:** The original data is provided in `.cdf` format. Before using this package, the files must be converted to standard NetCDF (`.nc`) format utilizing the **CANDIS** software suite, developed by David J. Raymond. Information and downloads for CANDIS can be found [here](https://kestrel.nmt.edu/~raymond/software/candis/candis.html).
+The dropsonde data used in this project originates from the OTREC field campaign.
+
+* Raw Data Access: Datasets can be downloaded from the [UCAR Earth Observing Laboratory (EOL) OTREC portal](https://www.eol.ucar.edu/field_projects/otrec).
+* Data Processing: The original dropsonde data is processed and gridded using the CANDIS software suite, developed by David J. Raymond, which produces the 3DVAR analysis files (merge-1.nc) used by this package. Information and downloads for CANDIS can be found [here](https://kestrel.nmt.edu/~raymond/software/candis/candis.html).
 
 ## 📁 Package Architecture & Directory Structure
 
