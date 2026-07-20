@@ -2,8 +2,6 @@
 
 This repository contains a modular Python package designed to generate publication-quality, 3D-Var dropsonde data collected during the **OTREC (Organization of Tropical East Pacific Convection)** field campaign. 
 
-The tool pairs multi-dimensional radar data with surface reflectivity data, applies specific temporal and altitudinal bounds for known convective cases, and exports high-resolution PDFs optimized for scientific journals.
-
 ## 📊 Data Source & Processing
 
 The radar data used in this project originates from the OTREC field campaign. 
