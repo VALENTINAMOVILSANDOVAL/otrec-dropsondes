@@ -19,7 +19,7 @@ otrec-dropsondes/
 │
 ├── data/                         # Place your converted NetCDF files here
 │   └── yyyymmdd/                 # One folder per case date (e.g. 20191002)
-│       └── boxN/                 # Box subdirectory (e.g. box1, box2, box3)
+│       └── boxXX/                # Box subdirectory (e.g. box1, box2, box3)
 │           └── merge-1.nc        # 3DVAR gridded dropsonde analysis file
 │
 ├── otrec_dropsondes/             # CORE PYTHON PACKAGE
