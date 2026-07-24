@@ -42,4 +42,6 @@ def _map_panel(ax, data2d, lon, lat, params, show_ylabel=True):
     cbar = ax.get_figure().colorbar(
         cf, ax=ax, orientation='horizontal', pad=0.22, aspect=20)
     cbar.set_ticks(ticks)
+    cbar.ax.set_xticklabels([f'{t:g}' for t in ticks], rotation=45, ha='right', fontsize=7)
+    cbar.ax.tick_params(labelsize=7, pad=1)
     return cf

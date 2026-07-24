@@ -188,11 +188,17 @@ def plot_zlatplot(case, ds, output_dir):
     cfL = ax_l.contourf(lat, z, mflux_vals, levels=np.linspace(tL[0], tL[-1], 100), cmap='RdBu_r', extend='both')
     ax_l.contour(lat, z, mflux_vals, levels=np.linspace(tL[0], tL[-1], len(tL)), colors='k', linewidths=0.5)
     if 0 in tL: ax_l.contour(lat, z, mflux_vals, levels=[0], colors='k', linewidths=1.5)
-    fig.colorbar(cfL, ax=ax_l, orientation='horizontal', pad=0.22, aspect=20).set_ticks(tL)
+    cbarL = fig.colorbar(cfL, ax=ax_l, orientation='horizontal', pad=0.22, aspect=20)
+    cbarL.set_ticks(tL)
+    cbarL.ax.set_xticklabels([f'{t:g}' for t in tL], rotation=45, ha='right', fontsize=7)
+    cbarL.ax.tick_params(labelsize=7, pad=1)
     cfR = ax_r.contourf(lat, z, u_zl.values, levels=np.linspace(tR[0], tR[-1], 100), cmap='RdBu_r', extend='both')
     ax_r.contour(lat, z, u_zl.values, levels=np.linspace(tR[0], tR[-1], len(tR)), colors='k', linewidths=0.5)
     if 0 in tR: ax_r.contour(lat, z, u_zl.values, levels=[0], colors='k', linewidths=1.5)
-    fig.colorbar(cfR, ax=ax_r, orientation='horizontal', pad=0.22, aspect=20).set_ticks(tR)
+    cbarR = fig.colorbar(cfR, ax=ax_r, orientation='horizontal', pad=0.22, aspect=20)
+    cbarR.set_ticks(tR)
+    cbarR.ax.set_xticklabels([f'{t:g}' for t in tR], rotation=45, ha='right', fontsize=7)
+    cbarR.ax.tick_params(labelsize=7, pad=1)
     skip_lat, skip_z = 3, 8
     for ax in [ax_l, ax_r]:
         ax.quiver(lat[::skip_lat], z[::skip_z], U[::skip_z, ::skip_lat], V[::skip_z, ::skip_lat],
@@ -208,6 +214,65 @@ def plot_zlatplot(case, ds, output_dir):
     fig.suptitle(params['title'], fontsize=10, y=0.98)
     plt.subplots_adjust(wspace=0.45, bottom=0.18, top=0.88)
     plt.savefig(os.path.join(output_dir, 'zlatplot.pdf'), bbox_inches='tight')
+    plt.close()
+
+def plot_pv_xz(case, ds, output_dir):
+    """
+    pv_xz.pdf -- longitude-height cross-sections at two latitude bands,
+    using the 'vort' config block's variables/titles/ticks.
+
+    Filled RdBu_r contours; black contour lines at the same tick levels;
+    a heavier black zero-contour; horizontal colorbar per panel. Panel
+    latitudes are chosen automatically at 1/3 and 2/3 of the lat range.
+    """
+    cfg = case.get('vort')
+    if not cfg:
+        warnings.warn('pv_xz: vort config not defined for this case — skipping.'); return
+
+    lon = ds['lon'].values
+    z = ds['z'].values
+
+    lon_min, lon_max = ds['lonx'].min().item(), ds['lonx'].max().item()
+    z_min, z_max = z.min(), z.max()
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 4.0))
+    axes = axes.flatten()
+
+    items = list(cfg.items())
+    lat_levels = [ds['lat'].values[len(ds['lat'])//3], ds['lat'].values[2*len(ds['lat'])//3]]
+
+    for i, (ax, (key, params)) in enumerate(zip(axes, items)):
+        var = params['variable']
+        data_level = ds.sel(lat=lat_levels[i], method='nearest')
+        data = data_level[var].transpose('z', 'lon').values
+
+        ticks = params['color_bar']['ticks']
+        cf_levels = np.linspace(ticks[0], ticks[-1], 100)
+        thin_contours = np.linspace(ticks[0], ticks[-1], len(ticks))
+
+        cf = ax.contourf(lon, z, data, levels=cf_levels, cmap='RdBu_r', extend='both')
+        ax.contour(lon, z, data, levels=thin_contours, colors='black', linewidths=0.5)
+        ax.contour(lon, z, data, levels=[0], colors='black', linewidths=1.5)
+
+        ax.set_title(f"{params['title']} (lat={lat_levels[i]:.2f})", pad=10, fontsize=10)
+        ax.set_xlabel('longitude (deg)')
+        if i == 0:
+            ax.set_ylabel('height (km)')
+
+        ax.set_xlim(lon_min, lon_max)
+        ax.set_ylim(z_min, z_max)
+
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=5))
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=7))
+
+        cbar = fig.colorbar(cf, ax=ax, orientation='horizontal', pad=0.25, aspect=20)
+        cbar.set_ticks(ticks)
+        cbar.ax.set_xticklabels([f'{t:g}' for t in ticks], rotation=45, ha='right', fontsize=7)
+        cbar.ax.tick_params(labelsize=7, pad=1)
+
+    plt.subplots_adjust(wspace=0.45, bottom=0.15, top=0.85, left=0.1, right=0.95)
+    plt.suptitle('pv_xz', y=0.98, fontsize=9, color='grey')
+    plt.savefig(os.path.join(output_dir, 'pv_xz.pdf'), bbox_inches='tight')
     plt.close()
 
 _LATPLOT_VAR_MAP = {
@@ -334,7 +399,7 @@ def plot_mfluxplot(case, ds, output_dir):
 
 _ALL_PLOT_FUNCTIONS = [
     plot_iisf, plot_ppiplot, plot_mflux, plot_src, plot_surf,
-    plot_sst_wind, plot_vort, plot_zlatplot, plot_latplot,
+    plot_sst_wind, plot_vort, plot_zlatplot, plot_pv_xz, plot_latplot,
     plot_profs, plot_sndplot, plot_mfluxplot,
 ]
 
